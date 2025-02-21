@@ -9,6 +9,8 @@ from util import to_date
 def _parse_entries(entries):
     result = {}
     for entry in entries:
+        if "reason" not in entry:
+            raise ValueError("Expected to find a reason for entry, but got none!")
         if "at" in entry:
             result[entry["at"]] = entry["reason"]
         elif "from" in entry and "to" in entry:
@@ -30,7 +32,7 @@ def _parse_entries(entries):
 
 
 def get_sick_days(filename):
-    with open(filename, "r") as f:
+    with open(filename, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f)
     if "sick_days" not in data:
         print(f"No sick days found in {filename}!")
@@ -39,7 +41,7 @@ def get_sick_days(filename):
 
 
 def get_personal_holidays(filename):
-    with open(filename, "r") as f:
+    with open(filename, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f)
     if "personal_holidays" not in data:
         print(f"No personal holidays found in {filename}!")

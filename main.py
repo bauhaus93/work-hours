@@ -38,7 +38,7 @@ def format_date(row):
 
 
 def to_calendar_week(row):
-    return f"KW{int(row['Date'].strftime("%W")) + 1:02d}"
+    return f"{row['Date'].year}_KW{int(row['Date'].strftime("%W")) + 1:02d}"
 
 
 def to_reason(row):
@@ -101,6 +101,7 @@ def main():
         df["Date"] = df.apply(format_date, axis=1)
         df["Worked Hours"] = df["Worked Hours"].round(3)
         df = add_missing_dates(df)
+        df.set_index("Date")
         df = df.sort_values("Date")
         df["CW"] = df.apply(
             to_calendar_week,
@@ -114,10 +115,16 @@ def main():
         df["Reason"] = df.apply(to_reason, axis=1)
         df["Details"] = df.apply(to_details, axis=1)
 
-        print(df)
+        grp = df.groupby("CW")
+        df_cw = grp["Target Hours"].sum().to_frame()
+        df_cw["Worked Hours"] = grp["Worked Hours"].sum()
+        df_cw["Delta"] = grp["Delta"].sum()
+        print(df_cw)
 
         print(df["Delta"].sum().round(3))
-        df.to_excel("output.xlsx", index=False)
+        with pd.ExcelWriter("output.xlsx") as writer:
+            df_cw.to_excel(writer, sheet_name="Weeks", index=True)
+            df.to_excel(writer, sheet_name="Raw", index=False)
 
 
 if __name__ == "__main__":
