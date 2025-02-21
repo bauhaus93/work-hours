@@ -1,0 +1,9 @@
+.DS_Store
+*.ods
+*.xls
+*.xlsx
+*.yml
+*.yaml
+*.pyc
+
+__pycache__
