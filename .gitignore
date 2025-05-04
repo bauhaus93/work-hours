@@ -1,4 +1,7 @@
 .DS_Store
+__pycache__
+.ipynb_checkpoints
+
 *.ods
 *.xls
 *.xlsx
@@ -6,4 +9,3 @@
 *.yaml
 *.pyc
 
-__pycache__
