@@ -38,7 +38,7 @@ def format_date(row):
 
 
 def to_calendar_week(row):
-    return f"{row['Date'].year}_KW{int(row['Date'].strftime("%W")) + 1:02d}"
+    return f"{row['Date'].year}_KW{int(row['Date'].strftime('%W')) + 1:02d}"
 
 
 def to_reason(row):
@@ -92,8 +92,8 @@ def add_missing_dates(df):
     return pd.concat([df, df_missing]).reset_index(drop=True)
 
 
-def get_attendance_daily():
-    with pd.ExcelFile("attendance.xlsx") as file:
+def get_attendance_daily(filename):
+    with pd.ExcelFile(filename) as file:
         df = pd.read_excel(file, "Worked Hours", skiprows=range(1, 3))
 
         df.columns = ["Date", "Worked Hours"]
@@ -115,8 +115,9 @@ def get_attendance_daily():
         df["Details"] = df.apply(to_details, axis=1)
         return df
 
-def get_attendance_weekly():
-    df = get_attendance_daily()
+def get_attendance_weekly(filename=None, df=None):
+    if df is None:
+        df = get_attendance_daily(filename)
     grp = df.groupby("CW")
     df_cw = grp["Target Hours"].sum().to_frame()
     df_cw["Worked Hours"] = grp["Worked Hours"].sum()

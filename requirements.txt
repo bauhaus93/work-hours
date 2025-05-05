@@ -1,3 +1,5 @@
 pandas
 jupyterlab
 matplotlib
+openpyxl
+python-lsp-server[all]
